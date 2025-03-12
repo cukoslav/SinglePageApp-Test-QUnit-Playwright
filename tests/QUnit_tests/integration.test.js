@@ -1,8 +1,8 @@
 const baseUrl = 'http://localhost:3030/';
 
 let user = {
-    email : "",
-    password : "123456"
+    email: "",
+    password: "123456"
 };
 
 let token = "";
@@ -10,11 +10,11 @@ let userId = "";
 
 let lastCreatedGameId = "";
 let game = {
-    title : "",
-    category : "",
-    maxLevel : "71",
-    imageUrl : "./images/ZombieLang.png",
-    summary : ""
+    title: "",
+    category: "",
+    maxLevel: "71",
+    imageUrl: "./images/ZombieLang.png",
+    summary: ""
 };
 
 let gameIdForComments = "";
@@ -22,6 +22,7 @@ let gameIdForComments = "";
 QUnit.config.reorder = false;
 
 QUnit.module("user functionalities", () => {
+
     QUnit.test("registration", async (assert) => {
         let path = 'users/register';
 
@@ -31,51 +32,17 @@ QUnit.module("user functionalities", () => {
         user.email = email;
 
         let response = await fetch(baseUrl + path, {
-            method : 'POST',
-            headers : { 
-                'content-type' : 'application/json'
-             },
-            body : JSON.stringify(user)
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
         });
 
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
-        assert.ok(json.hasOwnProperty('email'), "email exist");
-        assert.equal(json['email'], user.email, "expected mail");
-        assert.strictEqual(typeof json.email, 'string', 'Property "email" is a string');
 
-        assert.ok(json.hasOwnProperty('password'), "password exist");
-        assert.equal(json['password'], user.password, "expected password");
-        assert.strictEqual(typeof json.password, 'string', 'Property "password" is a string');
-
-        assert.ok(json.hasOwnProperty('accessToken'), "accessToken exist");
-        assert.strictEqual(typeof json.accessToken, 'string', 'Property "accessToken" is a string');
-        
-        assert.ok(json.hasOwnProperty('_id'), "id exist"); 
-        assert.strictEqual(typeof json._id, 'string', 'Property "_id" is a string');
-
-        token = json['accessToken']; 
-        userId = json['_id']; 
-        sessionStorage.setItem('game-user', JSON.stringify(user)); 
-    });
-
-    QUnit.test("login", async (assert) => {
-        let path = 'users/login';
-
-        let response = await fetch(baseUrl + path, {
-            method : 'POST',
-            headers : { 
-                'content-type' : 'application/json'
-             },
-            body : JSON.stringify(user)
-        });
-
-        assert.ok(response.ok, "successful response");
-
-        let json = await response.json();
-        
         assert.ok(json.hasOwnProperty('email'), "email exist");
         assert.equal(json['email'], user.email, "expected mail");
         assert.strictEqual(typeof json.email, 'string', 'Property "email" is a string');
@@ -90,17 +57,51 @@ QUnit.module("user functionalities", () => {
         assert.ok(json.hasOwnProperty('_id'), "id exist");
         assert.strictEqual(typeof json._id, 'string', 'Property "_id" is a string');
 
-        userId = json['_id']; //get id
-        token = json['accessToken']; //get token
-        sessionStorage.setItem('game-user', JSON.stringify(user)); //set token to session store in browser
+        token = json['accessToken'];
+        userId = json['_id'];
+        sessionStorage.setItem('game-user', JSON.stringify(user));
+    });
+
+    QUnit.test("login", async (assert) => {
+        let path = 'users/login';
+
+        let response = await fetch(baseUrl + path, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        });
+
+        assert.ok(response.ok, "successful response");
+
+        let json = await response.json();
+
+        assert.ok(json.hasOwnProperty('email'), "email exist");
+        assert.equal(json['email'], user.email, "expected mail");
+        assert.strictEqual(typeof json.email, 'string', 'Property "email" is a string');
+
+        assert.ok(json.hasOwnProperty('password'), "password exist");
+        assert.equal(json['password'], user.password, "expected password");
+        assert.strictEqual(typeof json.password, 'string', 'Property "password" is a string');
+
+        assert.ok(json.hasOwnProperty('accessToken'), "accessToken exist");
+        assert.strictEqual(typeof json.accessToken, 'string', 'Property "accessToken" is a string');
+
+        assert.ok(json.hasOwnProperty('_id'), "id exist");
+        assert.strictEqual(typeof json._id, 'string', 'Property "_id" is a string');
+
+        userId = json['_id'];
+        token = json['accessToken'];
+        sessionStorage.setItem('game-user', JSON.stringify(user));
     });
 });
 
 QUnit.module("games functionalities", () => {
     QUnit.test("get all games", async (assert) => {
         let path = 'data/games';
-        let queryParam = '?sortBy=_createdOn%20desc'; //will sort all games in descending order - help for games order prediction
-        
+        let queryParam = '?sortBy=_createdOn%20desc';
+
         let response = await fetch(baseUrl + path + queryParam);
 
         assert.ok(response.ok, "successful response");
@@ -146,18 +147,18 @@ QUnit.module("games functionalities", () => {
         game.summary = `Short random summery of ${game.title}`;
 
         let response = await fetch(baseUrl + path, {
-            method : 'POST',
-            headers : {
-                'content-type' : 'application/json',
-                'X-Authorization' : token
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
             },
-            body : JSON.stringify(game)
+            body: JSON.stringify(game)
         });
 
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(json.hasOwnProperty('category'), 'Property "category" exists');
         assert.strictEqual(typeof json.category, 'string', 'Property "category" is a string');
         assert.strictEqual(json.category, game.category, 'Property "category" has the correct value');
@@ -199,7 +200,7 @@ QUnit.module("games functionalities", () => {
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(json.hasOwnProperty('category'), 'Property "category" exists');
         assert.strictEqual(typeof json.category, 'string', 'Property "category" is a string');
         assert.strictEqual(json.category, game.category, 'Property "category" has the correct value');
@@ -242,18 +243,18 @@ QUnit.module("games functionalities", () => {
         game.summary = `Edited short summery of ${game.title}`;
 
         let response = await fetch(baseUrl + path + `/${lastCreatedGameId}`, {
-            method : 'PUT',
-            headers : {
-                'content-type' : 'application/json',
-                'X-Authorization' : token
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
             },
-            body : JSON.stringify(game)
+            body: JSON.stringify(game)
         });
 
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(json.hasOwnProperty('category'), 'Property "category" exists');
         assert.strictEqual(typeof json.category, 'string', 'Property "category" is a string');
         assert.strictEqual(json.category, game.category, 'Property "category" has the correct value');
@@ -297,8 +298,8 @@ QUnit.module("games functionalities", () => {
         game.summary = `Edited short summery of ${game.title}`;
 
         let response = await fetch(baseUrl + path + `/${lastCreatedGameId}`, {
-            method : 'DELETE',
-            headers : { 'X-Authorization' : token }
+            method: 'DELETE',
+            headers: { 'X-Authorization': token }
         });
 
         assert.ok(response.ok, "successful response");
@@ -308,17 +309,16 @@ QUnit.module("games functionalities", () => {
 QUnit.module("comments functionalities", () => {
     QUnit.test("newly created game - no comments (empty array)", async (assert) => {
         let path = 'data/comments';
-        
-        //create new game and get Id:
+
         let gameId = (await fetch(baseUrl + 'data/games', {
-            method : 'POST',
-            headers : {
-                'content-type' : 'application/json',
-                'X-Authorization' : token
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
             },
-            body : JSON.stringify(game)
+            body: JSON.stringify(game)
         })
-        .then(response => response.json()))._id;
+            .then(response => response.json()))._id;
 
         gameIdForComments = gameId;
 
@@ -329,7 +329,7 @@ QUnit.module("comments functionalities", () => {
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(Array.isArray(json), "response is array");
         assert.ok(json.length === 0, "array is empty");
     });
@@ -337,26 +337,26 @@ QUnit.module("comments functionalities", () => {
     QUnit.test("post new comment", async (assert) => {
         let path = 'data/comments';
 
-        let random =  Math.floor(Math.random() * 1000);
+        let random = Math.floor(Math.random() * 1000);
 
         let comment = {
-            gameId : gameIdForComments,
-            comment  : `comment value`
+            gameId: gameIdForComments,
+            comment: `comment value`
         };
 
         let response = await fetch(baseUrl + path, {
-            method : 'POST',
-            headers : {
-                'content-type' : 'application/json',
-                'X-Authorization' : token
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
             },
-            body : JSON.stringify(comment)
+            body: JSON.stringify(comment)
         });
 
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(json.hasOwnProperty('comment'), 'Property "comment" exists');
         assert.strictEqual(typeof json.comment, 'string', 'Property "comment" is a string');
         assert.strictEqual(json.comment, comment.comment, 'Property "comment" has the correct value');
@@ -370,11 +370,13 @@ QUnit.module("comments functionalities", () => {
 
         assert.ok(json.hasOwnProperty('_id'), 'Property "_id" exists');
         assert.strictEqual(typeof json._id, 'string', 'Property "_id" is a string');
+
+        let createdComment = json.comment
     });
 
     QUnit.test("get comments for specific game", async (assert) => {
         let path = 'data/comments';
-        
+
         let queryParams = `?where=gameId%3D%22${gameIdForComments}%22`;
 
         let response = await fetch(baseUrl + path + queryParams)
@@ -382,26 +384,81 @@ QUnit.module("comments functionalities", () => {
         assert.ok(response.ok, "successful response");
 
         let json = await response.json();
-        
+
         assert.ok(Array.isArray(json), "Response should be an array");
 
         json.forEach(comment => {
             assert.ok(comment.hasOwnProperty('_ownerId'), "Comment should have _ownerId property");
             assert.strictEqual(typeof comment._ownerId, "string", "_ownerId should be a string");
-           
+
             assert.ok(comment.hasOwnProperty('gameId'), "Comment should have gameId property");
             assert.strictEqual(typeof comment.gameId, "string", "gameId should be a string");
-            
+
             assert.ok(comment.hasOwnProperty('comment'), "Comment should have comment property");
             assert.strictEqual(typeof comment.comment, "string", "comment should be a string");
 
             assert.ok(comment.hasOwnProperty('_createdOn'), "Comment should have _createdOn property");
             assert.strictEqual(typeof comment._createdOn, "number", "_createdOn should be a number");
-                
+
             assert.ok(comment.hasOwnProperty('_id'), "Comment should have _id property");
             assert.strictEqual(typeof comment._id, "string", "_id should be a string");
-            
+
         })
     });
+    QUnit.test("edit comment", async (assert) => {
+        let path = 'data/comments';
+
+        let comment = {
+            gameId: gameIdForComments,
+            comment: `original comment value`
+        };
+
+        let response = await fetch(baseUrl + path, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
+            },
+            body: JSON.stringify(comment)
+        });
+
+        assert.ok(response.ok, "successful response");
+
+        let json = await response.json();
+
+        let commentId = json._id;
+
+        let editedComment = "edited comment value";
+
+        let editResponse = await fetch(baseUrl + path + `/${commentId}`, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+                'X-Authorization': token
+            },
+            body: JSON.stringify({ comment: editedComment })
+        });
+
+        assert.ok(editResponse.ok, "edit successful");
+
+        let editedJson = await editResponse.json();
+
+        assert.ok(editedJson.hasOwnProperty('comment'), 'Property "comment" exists');
+        assert.strictEqual(editedJson.comment, editedComment, 'The comment has been updated');
+        assert.strictEqual(typeof editedJson.comment, 'string', 'Property "comment" is a string');
+
+        assert.ok(editedJson.hasOwnProperty('_createdOn'), 'Property "_createdOn" exists');
+        assert.strictEqual(typeof editedJson._createdOn, 'number', 'Property "_createdOn" is a number');
+        assert.ok(editedJson.hasOwnProperty('_id'), 'Property "_id" exists');
+        assert.strictEqual(editedJson._id, commentId, 'The comment ID remains the same');
+
+
+        if (editedJson.hasOwnProperty('gameId')) {
+            assert.strictEqual(editedJson.gameId, comment.gameId, 'The gameId remains the same');
+        }
+    });
+
 });
+
+
 
